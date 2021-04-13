@@ -1,3 +1,12 @@
 Welcome to cgmTools
 -------------------------------
 This is where we store stuff
+
+
+# Shotgun Configuration
+To use the SHotgun Workfiles File Save instead of cgmTools's file saving functionality, make sure to set the 
+
+    CGMTOOLS_USE_SHOTGUN_FILE_SAVE
+
+environement variable (can have any value).
+

@@ -2072,6 +2072,36 @@ example:
         versionList = self.versionList if self.hasSub else self.subTypeSearchList
         existingFiles = versionList['items']
 
+        # some pre-vars we should set in the environement but here for testing
+        os.environ["CGMTOOLS_USE_SHOTGUN_FILE_SAVE"] = "True"
+
+        # Test for Shotgun var, then proceed to save in either cgm-way or Shotgun way
+        if "CGMTOOLS_USE_SHOTGUN_FILE_SAVE" in os.environ:
+            import sgtk
+
+            # get engine and toolkit
+            engine = sgtk.platform.current_engine()
+            tk = engine.sgtk
+            context = tk.context_from_path(self.versionDirectory)
+            log.error(context)
+
+            # attempt to change our engine context so the file-save dialog will open up in the right context
+            sgtk.platform.change_context(context)
+
+            # open/run shotgun file-save command
+            callback = engine.commands["File Save..."]["callback"]
+            callback()
+
+            # reload cgm ui
+            self.LoadVersionList()
+            new_save_file = os.path.basename(mc.file(q=True, loc=True))
+            versionList['scrollList'].selectByValue(new_save_file)
+            self.StoreCurrentSelection()
+            self.refreshMetaData()
+            self.LoadVersionList()
+
+            return()
+
         #animationName = self.subTypeSearchList['scrollList'].getSelectedItem()
         wantedName = "%s_%s" % (self.assetList['scrollList'].getSelectedItem(), self.subTypeSearchList['scrollList'].getSelectedItem() if self.hasSub else self.subType)
         if self.hasVariant:
